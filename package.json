@@ -1,0 +1,28 @@
+{
+  "name": "personal-budget",
+  "version": "1.0.0",
+  "description": "An API that allows clients to create and manage a personal budget.",
+  "keywords": [
+    "node",
+    "api",
+    "budget"
+  ],
+  "homepage": "https://github.com/josegamundi/personal-budget#readme",
+  "bugs": {
+    "url": "https://github.com/josegamundi/personal-budget/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josegamundi/personal-budget.git"
+  },
+  "license": "GPL-3.0",
+  "author": "Jose Gamundi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
