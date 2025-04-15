@@ -17,4 +17,9 @@ envelopesRouter.post('/', (req, res, next) => {
     }
 });
 
+// Get all envelopes
+envelopesRouter.get('/', (req, res, next) => {
+    res.status(200).send(budget.envelopes);   
+});
+
 module.exports = envelopesRouter;
