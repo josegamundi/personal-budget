@@ -22,4 +22,11 @@ envelopesRouter.get('/', (req, res, next) => {
     res.status(200).send(budget.envelopes);   
 });
 
+// Get an envelope
+envelopesRouter.get('/:id', (req, res, next) => {
+    const envelopeId = Number(req.params.id);
+    const respond = budget.envelopes.find((envelope) => envelope.id === envelopeId);
+    res.status(200).send(respond);
+});
+
 module.exports = envelopesRouter;
