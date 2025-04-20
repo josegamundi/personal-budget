@@ -1,33 +1,53 @@
+// Essentials
+
 const {
-    checkBudget,
-    isEnvelopeValid
+    checkObject,
+    budgetTemplate,
+    envelopeTemplate,
+    transactionInfoTemplate
 } = require('./validations.js');
 
-const recordTransaction = (budget, record) => {
-    record.date = new Date();
-    record.id = budget.records.lastTransactionId += 1;
-    budget.transactions.push(record);
+const budget = require('./data.js');
+
+// Features
+
+const recordTransaction = (transactionInfoObj) => {
+
+    checkObject(transactionInfoTemplate, transactionInfoObj);
+
+    // Add the current date and an ID to the record
+    transactionInfoObj.date = new Date();
+    transactionInfoObj.id = budget.records.lastTransactionId += 1;
+
+    // Add the transaction record to the budget records
+    budget.transactions.push(transactionInfoObj);
 }
 
-const createEnvelope = (budget, envelope) => {
+const createEnvelope = (envelopeObj) => {
 
-    checkBudget(budget);
+    checkObject(budgetTemplate, budget);
+    checkObject(envelopeTemplate, envelopeObj);
+    
+    // Add an ID to the envelope
+    envelopeObj.id = budget.records.lastEnvelopeId += 1;
 
-    if (!isEnvelopeValid(envelope)) {
-        throw new Error("The envelope doesn't meet the required structure.");
-    }
-    envelope.id = budget.records.lastEnvelopeId += 1;
-    budget.balance += envelope.balance;
-    budget.envelopes.push(envelope);
+    // Push the new envelope to the budget
+    budget.balance += envelopeObj.balance;
+    budget.envelopes.push(envelopeObj);
 
-    recordTransaction(budget, {
+    // Record the transaction information
+    const transactionInfo = {
         from: "deposit",
-        to: envelope.title,
-        amount: envelope.balance,
-        comment: `${envelope.title} envelope created with $${envelope.balance}`
-    });
+        to: envelopeObj.title,
+        amount: envelopeObj.balance,
+        comment: `${envelopeObj.title} envelope created with $${envelopeObj.balance}`
+    }
+    recordTransaction(transactionInfo);
+
+    return envelopeObj;
 }
 
+// Exports
 
 module.exports = {
     createEnvelope
