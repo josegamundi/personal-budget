@@ -33,7 +33,7 @@ const checkObject = (objTemplate, obj) => {
 const throwErrorInDetail = (message, prevError, httpStatusCode) => {
     throw new Error(message, {
         cause: {
-            detail: prevError,
+            detail: prevError || { message: `No other errors were detected.` },
             code: httpStatusCode
         }
     });

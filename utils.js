@@ -61,8 +61,33 @@ const createEnvelope = (envelopeObj) => {
     return envelopeObj;
 }
 
+const getEnvelope = (id) => {
+
+    const envelopeList = budget.envelopes;
+    
+    // Check if there are envelopes in the list.
+    if (envelopeList.length === 0) {
+        throw new Error(`The envelope list is empty.`);
+    }
+
+    // Get an envelope by ID
+    if (id && typeof id === "number") {
+        
+        const envelope = envelopeList.find((enve) => enve.id === id);
+        
+        if (!envelope) {
+            throwErrorInDetail(`Envelope not found.`, '', 404);
+        }
+        
+        return envelope;
+    }
+
+    return envelopeList;
+};
+
 // Exports
 
 module.exports = {
-    createEnvelope
+    createEnvelope,
+    getEnvelope
 };

@@ -1,32 +1,44 @@
+// Essentials
+
 const express = require('express');
 const envelopesRouter = express.Router();
 
-const budget = require('./data');
 const {
-    createEnvelope
+    createEnvelope,
+    getEnvelope
 } = require('./utils');
 
-// Create envelope
+// Endpoints
+
+// Create an envelope
 envelopesRouter.post('/', (req, res, next) => {
-    const envelope = createEnvelope(req.body);
-    res.status(201).send(envelope);
+    req.messageBack = createEnvelope(req.body);
+    req.statusCode = 201;
+    next();
 });
 
-/*
-// Get all envelopes
+// Get all the envelopes
 envelopesRouter.get('/', (req, res, next) => {
-    res.status(200).send(budget.envelopes);  
+    req.messageBack = getEnvelope();
+    next();
 });
 
 // Get an envelope
 envelopesRouter.get('/:id', (req, res, next) => {
-    const envelopeId = Number(req.params.id);
-    const respond = budget.envelopes.find((envelope) => envelope.id === envelopeId);
-    res.status(200).send(respond);
+    req.messageBack = getEnvelope(Number(req.params.id));
+    next();
 });
-*/
 
-// Error handler:
+// Handlers
+
+// Successful response 
+envelopesRouter.use('/', (req, res, next) => {
+    const messageBack = req.messageBack || 'OK';
+    const statusCode = req.statusCode || 200;
+    res.status(statusCode).send(messageBack);
+});
+
+// Error catching
 envelopesRouter.use((err, req, res, next) => {
     
     if (err["cause"]) {
@@ -40,5 +52,7 @@ envelopesRouter.use((err, req, res, next) => {
 
     res.status(500).send(err.message);
 });
+
+// Exports
 
 module.exports = envelopesRouter;
