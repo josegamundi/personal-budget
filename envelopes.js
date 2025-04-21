@@ -8,12 +8,8 @@ const {
 
 // Create envelope
 envelopesRouter.post('/', (req, res, next) => {
-    try {
-        const envelope = createEnvelope(req.body);
-        res.status(201).send(envelope);
-    } catch(error) {
-        res.status(500).send(error.message);
-    }
+    const envelope = createEnvelope(req.body);
+    res.status(201).send(envelope);
 });
 
 /*
@@ -29,5 +25,20 @@ envelopesRouter.get('/:id', (req, res, next) => {
     res.status(200).send(respond);
 });
 */
+
+// Error handler:
+envelopesRouter.use((err, req, res, next) => {
+    
+    if (err["cause"]) {
+        const message = `
+            ${err.message}
+            ${err["cause"].detail.message}
+        `;
+        const statusCode = err["cause"].code;
+        res.status(statusCode).send(message);
+    } 
+
+    res.status(500).send(err.message);
+});
 
 module.exports = envelopesRouter;

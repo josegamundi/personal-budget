@@ -12,7 +12,7 @@ const checkValueType = (value, type) => {
 
 const checkObject = (objTemplate, obj) => {
 
-    if (typeof obj !== "object") throw new Error(`The object to check is not an object`);
+    if (typeof obj !== "object") throw new Error(`The object to check is not an object.`);
 
     outerLoop: for (const propTemplate in objTemplate) {
         for (const prop in obj) {
@@ -26,6 +26,17 @@ const checkObject = (objTemplate, obj) => {
         throw new Error(`The '${propTemplate}' property is missing from the object.`);
     }
     return true;
+};
+
+// Complements
+
+const throwErrorInDetail = (message, prevError, httpStatusCode) => {
+    throw new Error(message, {
+        cause: {
+            detail: prevError,
+            code: httpStatusCode
+        }
+    });
 };
 
 // Validation templates
@@ -53,6 +64,7 @@ const transactionInfoTemplate = {
 
 module.exports = {
     checkObject,
+    throwErrorInDetail,
     budgetTemplate,
     envelopeTemplate,
     transactionInfoTemplate

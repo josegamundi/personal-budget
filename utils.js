@@ -2,6 +2,7 @@
 
 const {
     checkObject,
+    throwErrorInDetail,
     budgetTemplate,
     envelopeTemplate,
     transactionInfoTemplate
@@ -13,8 +14,12 @@ const budget = require('./data.js');
 
 const recordTransaction = (transactionInfoObj) => {
 
-    checkObject(transactionInfoTemplate, transactionInfoObj);
-
+    try {
+        checkObject(transactionInfoTemplate, transactionInfoObj);
+    } catch(error) {
+        throwErrorInDetail(`The transaction record failed.`, error, 500);
+    }
+    
     // Add the current date and an ID to the record
     transactionInfoObj.date = new Date();
     transactionInfoObj.id = budget.records.lastTransactionId += 1;
@@ -25,8 +30,17 @@ const recordTransaction = (transactionInfoObj) => {
 
 const createEnvelope = (envelopeObj) => {
 
-    checkObject(budgetTemplate, budget);
-    checkObject(envelopeTemplate, envelopeObj);
+    try {
+        checkObject(budgetTemplate, budget);
+    } catch(error) {
+        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
+    }
+
+    try {
+        checkObject(envelopeTemplate, envelopeObj);
+    } catch(error) {
+        throwErrorInDetail(`The envelope is invalid.`, error, 400);
+    }
     
     // Add an ID to the envelope
     envelopeObj.id = budget.records.lastEnvelopeId += 1;
@@ -41,7 +55,7 @@ const createEnvelope = (envelopeObj) => {
         to: envelopeObj.title,
         amount: envelopeObj.balance,
         comment: `${envelopeObj.title} envelope created with $${envelopeObj.balance}`
-    }
+    };
     recordTransaction(transactionInfo);
 
     return envelopeObj;
