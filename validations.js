@@ -20,7 +20,7 @@ const checkObject = (objTemplate, obj) => {
                 if (checkValueType(obj[prop], objTemplate[propTemplate])) {
                     continue outerLoop;
                 };
-                throw new Error(`Property '${prop}' doesn't match the value type '${objTemplate[propTemplate]}'.`);
+                throw new Error(`Invalid value type: Property '${prop}' is not a '${objTemplate[propTemplate]}'.`);
             }
         }
         throw new Error(`The '${propTemplate}' property is missing from the object.`);

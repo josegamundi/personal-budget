@@ -5,7 +5,8 @@ const envelopesRouter = express.Router();
 
 const {
     createEnvelope,
-    getEnvelope
+    getEnvelopes,
+    getEnvelopeById
 } = require('./utils');
 
 // Endpoints
@@ -19,13 +20,13 @@ envelopesRouter.post('/', (req, res, next) => {
 
 // Get all the envelopes
 envelopesRouter.get('/', (req, res, next) => {
-    req.messageBack = getEnvelope();
+    req.messageBack = getEnvelopes();
     next();
 });
 
 // Get an envelope
 envelopesRouter.get('/:id', (req, res, next) => {
-    req.messageBack = getEnvelope(Number(req.params.id));
+    req.messageBack = getEnvelopeById(Number(req.params.id));
     next();
 });
 

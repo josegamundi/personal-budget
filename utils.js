@@ -10,7 +10,16 @@ const {
 
 const budget = require('./data.js');
 
-// Features
+// Complements
+
+const checkBudget = () => {
+
+    try {
+        checkObject(budgetTemplate, budget);
+    } catch(error) {
+        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
+    }
+};
 
 const recordTransaction = (transactionInfoObj) => {
 
@@ -28,13 +37,11 @@ const recordTransaction = (transactionInfoObj) => {
     budget.transactions.push(transactionInfoObj);
 }
 
+// Features
+
 const createEnvelope = (envelopeObj) => {
 
-    try {
-        checkObject(budgetTemplate, budget);
-    } catch(error) {
-        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
-    }
+    checkBudget();
 
     try {
         checkObject(envelopeTemplate, envelopeObj);
@@ -61,33 +68,39 @@ const createEnvelope = (envelopeObj) => {
     return envelopeObj;
 }
 
-const getEnvelope = (id) => {
+const getEnvelopes = () => {
 
-    const envelopeList = budget.envelopes;
-    
-    // Check if there are envelopes in the list.
-    if (envelopeList.length === 0) {
-        throw new Error(`The envelope list is empty.`);
+    checkBudget();
+
+    const envelopes = budget.envelopes;
+
+    if (envelopes.length === 0) {
+        throwErrorInDetail(`The envelope list is empty.`, '', 404);
     }
 
-    // Get an envelope by ID
-    if (id && typeof id === "number") {
-        
-        const envelope = envelopeList.find((enve) => enve.id === id);
-        
-        if (!envelope) {
-            throwErrorInDetail(`Envelope not found.`, '', 404);
-        }
-        
-        return envelope;
-    }
-
-    return envelopeList;
+    return envelopes;
 };
+
+const getEnvelopeById = (id) => {
+
+    if (typeof id !== "number") {
+        throwErrorInDetail(`Invalid value type: The envelope ID is not a number.`, '', 400);
+    }
+
+    const envelopes = getEnvelopes();
+    const envelope = envelopes.find((enve) => enve.id === id);
+    
+    if (!envelope) {
+        throwErrorInDetail(`Envelope not found.`, '', 404);
+    }
+    
+    return envelope;
+}
 
 // Exports
 
 module.exports = {
     createEnvelope,
-    getEnvelope
+    getEnvelopes,
+    getEnvelopeById
 };
