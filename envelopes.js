@@ -6,7 +6,8 @@ const envelopesRouter = express.Router();
 const {
     createEnvelope,
     getEnvelopes,
-    getEnvelopeById
+    getEnvelopeById,
+    updateBalance
 } = require('./utils');
 
 // Endpoints
@@ -27,6 +28,12 @@ envelopesRouter.get('/', (req, res, next) => {
 // Get an envelope
 envelopesRouter.get('/:id', (req, res, next) => {
     req.messageBack = getEnvelopeById(Number(req.params.id));
+    next();
+});
+
+// Make a withdrawal or deposit
+envelopesRouter.put('/:id', (req, res, next) => {
+    req.messageBack = updateBalance(req.query, Number(req.params.id));
     next();
 });
 

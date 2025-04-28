@@ -1,76 +1,54 @@
 // Essentials
 
 const {
-    checkObject,
     throwErrorInDetail,
-    budgetTemplate,
-    envelopeTemplate,
-    transactionInfoTemplate
+    checkBudget,
+    checkEnvelope,
+    checkTransactionData,
+    checkUpdateBalance
 } = require('./validations.js');
 
-const budget = require('./data.js');
-
-// Complements
-
-const checkBudget = () => {
-
-    try {
-        checkObject(budgetTemplate, budget);
-    } catch(error) {
-        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
-    }
-};
-
-const recordTransaction = (transactionInfoObj) => {
-
-    try {
-        checkObject(transactionInfoTemplate, transactionInfoObj);
-    } catch(error) {
-        throwErrorInDetail(`The transaction record failed.`, error, 500);
-    }
-    
-    // Add the current date and an ID to the record
-    transactionInfoObj.date = new Date();
-    transactionInfoObj.id = budget.records.lastTransactionId += 1;
-
-    // Add the transaction record to the budget records
-    budget.transactions.push(transactionInfoObj);
-}
+const budget= require('./data.js');
 
 // Features
 
+const recordTransaction = (type, target, amount) => {
+    
+    const data = {
+        type, 
+        target, 
+        amount, 
+        date: new Date(),
+        id: budget.records.lastTransactionId += 1
+    }
+
+    checkTransactionData(data);
+
+    budget.history.push(data);
+};
+
 const createEnvelope = (envelopeObj) => {
 
-    checkBudget();
-
-    try {
-        checkObject(envelopeTemplate, envelopeObj);
-    } catch(error) {
-        throwErrorInDetail(`The envelope is invalid.`, error, 400);
-    }
+    checkBudget(budget);
+    checkEnvelope(envelopeObj);
     
-    // Add an ID to the envelope
     envelopeObj.id = budget.records.lastEnvelopeId += 1;
 
-    // Push the new envelope to the budget
     budget.balance += envelopeObj.balance;
     budget.envelopes.push(envelopeObj);
 
-    // Record the transaction information
-    const transactionInfo = {
-        from: "deposit",
-        to: envelopeObj.title,
-        amount: envelopeObj.balance,
-        comment: `${envelopeObj.title} envelope created with $${envelopeObj.balance}`
-    };
-    recordTransaction(transactionInfo);
-
+    recordTransaction(
+        "deposit",
+        envelopeObj.title,
+        envelopeObj.balance
+    );
+    
     return envelopeObj;
 }
 
 const getEnvelopes = () => {
 
-    checkBudget();
+    checkBudget(budget);
 
     const envelopes = budget.envelopes;
 
@@ -97,10 +75,47 @@ const getEnvelopeById = (id) => {
     return envelope;
 }
 
+const updateBalance = (queryObj, enveId) => {
+
+    checkUpdateBalance(queryObj);
+
+    let { transactionType, amount } = queryObj;
+    amount = Number(amount);
+
+    if (amount <= 0) {
+        throwErrorInDetail(`The amount must be greater than 0`, '', 400);
+    }
+
+    const envelope = getEnvelopeById(enveId);
+
+    if (transactionType === 'withdraw') {
+        if (!budget.balance <= 0) {
+            budget.balance -= amount;
+            envelope.balance -= amount;
+        } else {
+            throwErrorInDetail(`The envelope balance is empty.`, '', 400);
+        }
+    } else if (transactionType === 'deposit') {
+        budget.balance += amount;
+        envelope.balance += amount;
+    } else {
+        throwErrorInDetail(`Invalid transaction type.`, '', 400);
+    }
+
+    recordTransaction(
+        transactionType,
+        envelope.title,
+        amount
+    );
+
+    return budget;
+};
+
 // Exports
 
 module.exports = {
     createEnvelope,
     getEnvelopes,
-    getEnvelopeById
+    getEnvelopeById,
+    updateBalance
 };

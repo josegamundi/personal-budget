@@ -1,4 +1,4 @@
-// Checking tools
+// Global checkers
 
 const checkValueType = (value, type) => {
 
@@ -28,7 +28,7 @@ const checkObject = (objTemplate, obj) => {
     return true;
 };
 
-// Complements
+// Error in detail
 
 const throwErrorInDetail = (message, prevError, httpStatusCode) => {
     throw new Error(message, {
@@ -39,33 +39,75 @@ const throwErrorInDetail = (message, prevError, httpStatusCode) => {
     });
 };
 
-// Validation templates
+// Local checkers
 
-const budgetTemplate = {
-    balance: "number",
-    envelopes: "array",
-    transactions: "array",
-    records: "object"
+const checkBudget = (obj) => {
+
+    const budgetTemplate = {
+        balance: "number",
+        envelopes: "array",
+        history: "array",
+        records: "object"
+    };
+
+    try {
+        checkObject(budgetTemplate, obj);
+    } catch(error) {
+        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
+    }
 };
 
-const envelopeTemplate = {
-    title: "string",
-    balance: "number"
-}
+const checkEnvelope = (obj) => {
 
-const transactionInfoTemplate = {
-    from: "string",
-    to: "string",
-    amount: "number",
-    comment: "string"
-}
+    const envelopeTemplate = {
+        title: "string",
+        balance: "number"
+    }
+
+    try {
+        checkObject(envelopeTemplate, obj);
+    } catch(error) {
+        throwErrorInDetail(`The envelope is invalid.`, error, 400);
+    }
+};
+
+const checkTransactionData = (obj) => {
+
+    const transactionDataTemplate = {
+        type: "string",
+        target: "string",
+        amount: "number",
+        date: "object",
+        id: "number"
+    }
+
+    try {
+        checkObject(transactionDataTemplate, obj);
+    } catch(error) {
+        throwErrorInDetail(`Transaction data recording has failed.`, error, 500);
+    }
+};
+
+const checkUpdateBalance = (obj) => {
+
+    const updateBalanceTemplate = {
+        transactionType: "string",
+        amount: "string"
+    }
+
+    try {
+        checkObject(updateBalanceTemplate, obj);
+    } catch(error) {
+        throwErrorInDetail(`The transaction has failed.`, error, 400);
+    }
+};
 
 // Exports
 
 module.exports = {
-    checkObject,
     throwErrorInDetail,
-    budgetTemplate,
-    envelopeTemplate,
-    transactionInfoTemplate
-}
+    checkBudget,
+    checkEnvelope,
+    checkTransactionData,
+    checkUpdateBalance
+};

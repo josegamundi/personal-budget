@@ -7,12 +7,11 @@ const budget = {
             id: 1
         }
     ],
-    transactions: [
-        {   
-            from: "deposit",
-            to: "main",
-            amount: 1000,
-            comment: "Budget started",
+    history: [
+        {
+            type: "deposit", 
+            target: "main", 
+            amount: 1000, 
             date: new Date(),
             id: 1
         }
