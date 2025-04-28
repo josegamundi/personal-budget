@@ -1,57 +1,60 @@
 // Essentials
 
 const {
+    checkNumber,
     throwErrorInDetail,
     checkBudget,
     checkEnvelope,
-    checkTransactionData,
-    checkUpdateBalance
+    checkTransactionData
 } = require('./validations.js');
 
 const budget= require('./data.js');
 
 // Features
 
-const recordTransaction = (type, target, amount) => {
+const recordTransaction = (type, from, to, amount) => {
     
     const data = {
-        type, 
-        target, 
-        amount, 
+        type,
+        from,
+        to,
+        amount,
+        budgetBalance: budget.balance,
         date: new Date(),
         id: budget.records.lastTransactionId += 1
     }
-
     checkTransactionData(data);
-
     budget.history.push(data);
+
+    return data;
 };
 
-const createEnvelope = (envelopeObj) => {
+const createEnvelope = (envelope) => {
 
     checkBudget(budget);
-    checkEnvelope(envelopeObj);
+    checkEnvelope(envelope);
     
-    envelopeObj.id = budget.records.lastEnvelopeId += 1;
+    envelope.id = budget.records.lastEnvelopeId += 1;
 
-    budget.balance += envelopeObj.balance;
-    budget.envelopes.push(envelopeObj);
+    budget.balance += envelope.balance;
+    budget.envelopes.push(envelope);
 
-    recordTransaction(
-        "deposit",
-        envelopeObj.title,
-        envelopeObj.balance
-    );
-    
-    return envelopeObj;
-}
+    return [
+        envelope,
+        recordTransaction(
+            "creation",
+            "unknown",
+            envelope.title,
+            envelope.balance
+        )
+    ];
+};
 
 const getEnvelopes = () => {
 
     checkBudget(budget);
 
     const envelopes = budget.envelopes;
-
     if (envelopes.length === 0) {
         throwErrorInDetail(`The envelope list is empty.`, '', 404);
     }
@@ -61,54 +64,91 @@ const getEnvelopes = () => {
 
 const getEnvelopeById = (id) => {
 
-    if (typeof id !== "number") {
-        throwErrorInDetail(`Invalid value type: The envelope ID is not a number.`, '', 400);
-    }
+    checkNumber(id);
 
     const envelopes = getEnvelopes();
     const envelope = envelopes.find((enve) => enve.id === id);
-    
     if (!envelope) {
         throwErrorInDetail(`Envelope not found.`, '', 404);
     }
     
     return envelope;
-}
+};
 
-const updateBalance = (queryObj, enveId) => {
+const addAmountToEnvelope = (amount, id, deposit = false) => {
+    
+    checkNumber(amount);
 
-    checkUpdateBalance(queryObj);
-
-    let { transactionType, amount } = queryObj;
-    amount = Number(amount);
-
-    if (amount <= 0) {
-        throwErrorInDetail(`The amount must be greater than 0`, '', 400);
+    let envelope;
+    try {
+        envelope = getEnvelopeById(id);
+    } catch(error) {
+        throwErrorInDetail(`Invalid destination.`, error, 404);
     }
+    envelope.balance += amount;
 
-    const envelope = getEnvelopeById(enveId);
-
-    if (transactionType === 'withdraw') {
-        if (!budget.balance <= 0) {
-            budget.balance -= amount;
-            envelope.balance -= amount;
-        } else {
-            throwErrorInDetail(`The envelope balance is empty.`, '', 400);
-        }
-    } else if (transactionType === 'deposit') {
+    if (deposit) {
         budget.balance += amount;
-        envelope.balance += amount;
-    } else {
-        throwErrorInDetail(`Invalid transaction type.`, '', 400);
+        return [
+            envelope,
+            recordTransaction(
+                "deposit",
+                "unknown",
+                envelope.title,
+                amount
+            )
+        ]
     }
 
-    recordTransaction(
-        transactionType,
-        envelope.title,
-        amount
-    );
+    return envelope;
+};
 
-    return budget;
+const extractAmountFromEnvelope = (amount, id, withdraw = false) => {
+    
+    checkNumber(amount);
+    
+    let envelope;
+    try {
+        envelope = getEnvelopeById(id);
+    } catch(error) {
+        throwErrorInDetail(`Invalid origin.`, error, 404);
+    }
+    if (envelope.balance <= 0) {
+        throw new Error(`The ${envelope.title} balance is empty.`);
+    }
+    envelope.balance -= amount;
+
+    if (withdraw) {
+        budget.balance -= amount;
+        return [
+            envelope,
+            recordTransaction(
+                "withdraw",
+                envelope.title,
+                "unknown",
+                amount
+            )
+        ]
+    }
+
+    return envelope;
+};
+
+const transferBetweenEnvelopes = (amount, fromId, toId) => {
+    
+    const origin = extractAmountFromEnvelope(amount, fromId);
+    const destination = addAmountToEnvelope(amount, toId);
+    
+    return [
+        origin,
+        destination,
+        recordTransaction(
+            "transfer",
+            origin.title,
+            destination.title,
+            amount
+        )
+    ];
 };
 
 // Exports
@@ -117,5 +157,7 @@ module.exports = {
     createEnvelope,
     getEnvelopes,
     getEnvelopeById,
-    updateBalance
+    addAmountToEnvelope,
+    extractAmountFromEnvelope,
+    transferBetweenEnvelopes
 };

@@ -9,9 +9,11 @@ const budget = {
     ],
     history: [
         {
-            type: "deposit", 
-            target: "main", 
-            amount: 1000, 
+            type: "deposit",
+            from: "unknown",
+            to: "main", 
+            amount: 1000,
+            budgetBalance: 1000,
             date: new Date(),
             id: 1
         }

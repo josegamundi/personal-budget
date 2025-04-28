@@ -7,43 +7,53 @@ const {
     createEnvelope,
     getEnvelopes,
     getEnvelopeById,
-    updateBalance
+    addAmountToEnvelope,
+    extractAmountFromEnvelope,
+    transferBetweenEnvelopes
 } = require('./utils');
 
 // Endpoints
 
 // Create an envelope
 envelopesRouter.post('/', (req, res, next) => {
-    req.messageBack = createEnvelope(req.body);
-    req.statusCode = 201;
-    next();
+    res.status(201).send(createEnvelope(req.body));
 });
 
 // Get all the envelopes
 envelopesRouter.get('/', (req, res, next) => {
-    req.messageBack = getEnvelopes();
-    next();
+    res.send(getEnvelopes());
 });
 
 // Get an envelope
 envelopesRouter.get('/:id', (req, res, next) => {
-    req.messageBack = getEnvelopeById(Number(req.params.id));
-    next();
+    res.send(getEnvelopeById(Number(req.params.id)));
 });
 
-// Make a withdrawal or deposit
-envelopesRouter.put('/:id', (req, res, next) => {
-    req.messageBack = updateBalance(req.query, Number(req.params.id));
-    next();
+// Add amount to envelope
+envelopesRouter.put('/deposit/:id', (req, res, next) => {
+    res.send(addAmountToEnvelope(
+        Number(req.query.amount),
+        Number(req.params.id),
+        true
+    ));
 });
 
-// Handlers
+// Extract amount from envelope
+envelopesRouter.put('/withdraw/:id', (req, res, next) => {
+    res.send(extractAmountFromEnvelope(
+        Number(req.query.amount),
+        Number(req.params.id),
+        true
+    ));
+});
 
-// Successful response 
-envelopesRouter.use('/', (req, res, next) => {
-    const messageBack = req.messageBack || 'OK';
-    const statusCode = req.statusCode || 200;
-    res.status(statusCode).send(messageBack);
+// Transfer amount between envelopes
+envelopesRouter.post('/transfer/:from/:to', (req, res, next) => {
+    res.send(transferBetweenEnvelopes(
+        Number(req.query.amount),
+        Number(req.params.from),
+        Number(req.params.to)
+    ));
 });
 
 // Error catching
@@ -57,7 +67,6 @@ envelopesRouter.use((err, req, res, next) => {
         const statusCode = err["cause"].code;
         res.status(statusCode).send(message);
     } 
-
     res.status(500).send(err.message);
 });
 

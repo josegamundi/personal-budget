@@ -28,6 +28,17 @@ const checkObject = (objTemplate, obj) => {
     return true;
 };
 
+const checkNumber = (value) => {
+
+    if (!checkValueType(value, "number")) {
+        throwErrorInDetail(`Invalid value type: The value is not a number.`, '', 400);
+    }
+    if (value <= 0) {
+        throwErrorInDetail(`The value must be greater than 0`, '', 400); 
+    }
+    return true;
+};
+
 // Error in detail
 
 const throwErrorInDetail = (message, prevError, httpStatusCode) => {
@@ -55,6 +66,7 @@ const checkBudget = (obj) => {
     } catch(error) {
         throwErrorInDetail(`There is a problem with the budget.`, error, 500);
     }
+    return true;
 };
 
 const checkEnvelope = (obj) => {
@@ -69,14 +81,17 @@ const checkEnvelope = (obj) => {
     } catch(error) {
         throwErrorInDetail(`The envelope is invalid.`, error, 400);
     }
+    return true;
 };
 
 const checkTransactionData = (obj) => {
 
     const transactionDataTemplate = {
         type: "string",
-        target: "string",
+        from: "string",
+        to: "string",
         amount: "number",
+        budgetBalance: "number",
         date: "object",
         id: "number"
     }
@@ -86,28 +101,15 @@ const checkTransactionData = (obj) => {
     } catch(error) {
         throwErrorInDetail(`Transaction data recording has failed.`, error, 500);
     }
-};
-
-const checkUpdateBalance = (obj) => {
-
-    const updateBalanceTemplate = {
-        transactionType: "string",
-        amount: "string"
-    }
-
-    try {
-        checkObject(updateBalanceTemplate, obj);
-    } catch(error) {
-        throwErrorInDetail(`The transaction has failed.`, error, 400);
-    }
+    return true;
 };
 
 // Exports
 
 module.exports = {
+    checkNumber,
     throwErrorInDetail,
     checkBudget,
     checkEnvelope,
-    checkTransactionData,
-    checkUpdateBalance
+    checkTransactionData
 };
