@@ -32,7 +32,7 @@ const checkObject = (objTemplate, obj) => {
 
 // Error in detail
 
-const throwErrorInDetail = (message, prevError, httpStatusCode) => {
+const throwErrorInDetail = (message, httpStatusCode, prevError = '') => {
     throw new Error(message, {
         cause: {
             detail: prevError || { message: `No other errors were detected.` },
@@ -46,10 +46,10 @@ const throwErrorInDetail = (message, prevError, httpStatusCode) => {
 const checkNumber = (value) => {
 
     if (!checkValueType(value, "number")) {
-        throwErrorInDetail(`Invalid value type: The 'amount' or 'id' is not a number.`, '', 400);
+        throwErrorInDetail(`Invalid value type: The 'amount' or 'id' is not a number.`, 400);
     }
     if (value <= 0) {
-        throwErrorInDetail(`The value must be greater than 0`, '', 400); 
+        throwErrorInDetail(`The value must be greater than 0`, 400); 
     }
     return true;
 };
@@ -66,7 +66,7 @@ const checkBudget = (obj) => {
     try {
         checkObject(budgetTemplate, obj);
     } catch(error) {
-        throwErrorInDetail(`There is a problem with the budget.`, error, 500);
+        throwErrorInDetail(`There is a problem with the budget.`, 500, error);
     }
     return true;
 };
@@ -81,7 +81,7 @@ const checkEnvelope = (obj) => {
     try {
         checkObject(envelopeTemplate, obj);
     } catch(error) {
-        throwErrorInDetail(`The envelope is invalid.`, error, 400);
+        throwErrorInDetail(`The envelope is invalid.`, 400, error);
     }
     return true;
 };
@@ -101,7 +101,7 @@ const checkTransactionData = (obj) => {
     try {
         checkObject(transactionDataTemplate, obj);
     } catch(error) {
-        throwErrorInDetail(`Transaction data recording has failed.`, error, 500);
+        throwErrorInDetail(`Transaction data recording has failed.`, 500, error);
     }
     return true;
 };

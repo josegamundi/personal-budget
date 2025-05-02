@@ -56,7 +56,7 @@ const getEnvelopes = () => {
 
     const envelopes = budget.envelopes;
     if (envelopes.length === 0) {
-        throwErrorInDetail(`The envelope list is empty.`, '', 404);
+        throwErrorInDetail(`The envelope list is empty.`, 404);
     }
 
     return envelopes;
@@ -69,7 +69,7 @@ const getEnvelopeById = (id, option) => {
     const envelopes = getEnvelopes();
     const envelopeIndex = envelopes.findIndex((enve) => enve.id === id);
     if (envelopeIndex === -1) {
-        throwErrorInDetail(`Envelope not found.`, '', 404);
+        throwErrorInDetail(`Envelope not found.`, 404);
     }
     const envelope = envelopes[envelopeIndex];
 
@@ -99,7 +99,7 @@ const addAmountToEnvelope = (amount, id, option) => {
     try {
         envelope = getEnvelopeById(id);
     } catch(error) {
-        throwErrorInDetail(`Invalid destination.`, error, 404);
+        throwErrorInDetail(`Invalid destination.`, 404, error);
     }
     envelope.balance += amount;
 
@@ -127,7 +127,7 @@ const extractAmountFromEnvelope = (amount, id, option) => {
     try {
         envelope = getEnvelopeById(id);
     } catch(error) {
-        throwErrorInDetail(`Invalid origin.`, error, 404);
+        throwErrorInDetail(`Invalid origin.`, 404, error);
     }
     if (envelope.balance <= 0) {
         throw new Error(`The ${envelope.title} balance is empty.`);
