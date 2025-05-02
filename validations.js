@@ -4,6 +4,8 @@ const checkValueType = (value, type) => {
 
     if (type === "array") {
         if (Array.isArray(value)) return true;
+    } else if (typeof value === "number") {
+        return (Number.isNaN(value)) ? false : true;
     } else if (typeof value === type) {
         return true;
     }
@@ -28,17 +30,6 @@ const checkObject = (objTemplate, obj) => {
     return true;
 };
 
-const checkNumber = (value) => {
-
-    if (!checkValueType(value, "number")) {
-        throwErrorInDetail(`Invalid value type: The value is not a number.`, '', 400);
-    }
-    if (value <= 0) {
-        throwErrorInDetail(`The value must be greater than 0`, '', 400); 
-    }
-    return true;
-};
-
 // Error in detail
 
 const throwErrorInDetail = (message, prevError, httpStatusCode) => {
@@ -51,6 +42,17 @@ const throwErrorInDetail = (message, prevError, httpStatusCode) => {
 };
 
 // Local checkers
+
+const checkNumber = (value) => {
+
+    if (!checkValueType(value, "number")) {
+        throwErrorInDetail(`Invalid value type: The 'amount' or 'id' is not a number.`, '', 400);
+    }
+    if (value <= 0) {
+        throwErrorInDetail(`The value must be greater than 0`, '', 400); 
+    }
+    return true;
+};
 
 const checkBudget = (obj) => {
 
@@ -107,8 +109,8 @@ const checkTransactionData = (obj) => {
 // Exports
 
 module.exports = {
-    checkNumber,
     throwErrorInDetail,
+    checkNumber,
     checkBudget,
     checkEnvelope,
     checkTransactionData

@@ -34,7 +34,7 @@ envelopesRouter.put('/deposit/:id', (req, res, next) => {
     res.send(addAmountToEnvelope(
         Number(req.query.amount),
         Number(req.params.id),
-        true
+        "deposit"
     ));
 });
 
@@ -43,7 +43,7 @@ envelopesRouter.put('/withdraw/:id', (req, res, next) => {
     res.send(extractAmountFromEnvelope(
         Number(req.query.amount),
         Number(req.params.id),
-        true
+        "withdraw"
     ));
 });
 
@@ -54,6 +54,11 @@ envelopesRouter.post('/transfer/:from/:to', (req, res, next) => {
         Number(req.params.from),
         Number(req.params.to)
     ));
+});
+
+// Delete an envelope
+envelopesRouter.delete("/:id", (req, res, next) => {
+    res.send(getEnvelopeById(Number(req.params.id), "delete"));
 });
 
 // Error catching

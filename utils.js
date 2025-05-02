@@ -1,8 +1,8 @@
 // Essentials
 
 const {
-    checkNumber,
     throwErrorInDetail,
+    checkNumber,
     checkBudget,
     checkEnvelope,
     checkTransactionData
@@ -42,7 +42,7 @@ const createEnvelope = (envelope) => {
     return [
         envelope,
         recordTransaction(
-            "creation",
+            "create",
             "unknown",
             envelope.title,
             envelope.balance
@@ -62,20 +62,36 @@ const getEnvelopes = () => {
     return envelopes;
 };
 
-const getEnvelopeById = (id) => {
+const getEnvelopeById = (id, option) => {
 
     checkNumber(id);
 
     const envelopes = getEnvelopes();
-    const envelope = envelopes.find((enve) => enve.id === id);
-    if (!envelope) {
+    const envelopeIndex = envelopes.findIndex((enve) => enve.id === id);
+    if (envelopeIndex === -1) {
         throwErrorInDetail(`Envelope not found.`, '', 404);
     }
+    const envelope = envelopes[envelopeIndex];
+
+    if (option === "delete") {
+        if (envelope.balance > 0) {
+            throw new Error(`The envelope must be empty before being deleted.`);
+        }
+        return [
+            envelopes.splice(envelopeIndex, 1),
+            recordTransaction(
+                "delete",
+                "unknown",
+                envelope.title,
+                envelope.balance
+            )
+        ];
+    };
     
     return envelope;
 };
 
-const addAmountToEnvelope = (amount, id, deposit = false) => {
+const addAmountToEnvelope = (amount, id, option) => {
     
     checkNumber(amount);
 
@@ -87,7 +103,7 @@ const addAmountToEnvelope = (amount, id, deposit = false) => {
     }
     envelope.balance += amount;
 
-    if (deposit) {
+    if (option === "deposit") {
         budget.balance += amount;
         return [
             envelope,
@@ -103,7 +119,7 @@ const addAmountToEnvelope = (amount, id, deposit = false) => {
     return envelope;
 };
 
-const extractAmountFromEnvelope = (amount, id, withdraw = false) => {
+const extractAmountFromEnvelope = (amount, id, option) => {
     
     checkNumber(amount);
     
@@ -115,10 +131,12 @@ const extractAmountFromEnvelope = (amount, id, withdraw = false) => {
     }
     if (envelope.balance <= 0) {
         throw new Error(`The ${envelope.title} balance is empty.`);
+    } else if (amount > envelope.balance) {
+        throw new Error(`The amount you want to withdraw is greater than the envelope balance.`);
     }
     envelope.balance -= amount;
 
-    if (withdraw) {
+    if (option === "withdraw") {
         budget.balance -= amount;
         return [
             envelope,
