@@ -29,37 +29,10 @@ const recordTransaction = (type, from, to, amount) => {
     return data;
 };
 
-const createEnvelope = (envelope) => {
-
-    checkBudget(budget);
-    checkEnvelope(envelope);
-    
-    envelope.id = budget.records.lastEnvelopeId += 1;
-
-    budget.balance += envelope.balance;
-    budget.envelopes.push(envelope);
-
-    return [
-        envelope,
-        recordTransaction(
-            "create",
-            "unknown",
-            envelope.title,
-            envelope.balance
-        )
-    ];
-};
-
 const getEnvelopes = () => {
 
     checkBudget(budget);
-
-    const envelopes = budget.envelopes;
-    if (envelopes.length === 0) {
-        throwErrorInDetail(`The envelope list is empty.`, 404);
-    }
-
-    return envelopes;
+    return budget.envelopes;
 };
 
 const getEnvelopeById = (id, option) => {
@@ -78,7 +51,7 @@ const getEnvelopeById = (id, option) => {
             throwErrorInDetail(`The ${envelope.title} envelope must be empty before being deleted.`, 400);
         }
         return [
-            envelopes.splice(envelopeIndex, 1),
+            envelopes.splice(envelopeIndex, 1)[0],
             recordTransaction(
                 "delete",
                 "unknown",
@@ -89,6 +62,33 @@ const getEnvelopeById = (id, option) => {
     };
     
     return envelope;
+};
+
+const createEnvelope = (envelope) => {
+
+    checkBudget(budget);
+    checkEnvelope(envelope);
+    
+    envelope.title = envelope.title.toLowerCase();
+
+    if (getEnvelopes().findIndex((enve) => enve.title === envelope.title) !== -1) {
+        throwErrorInDetail(`The ${envelope.title} envelope already exists`, 400);
+    }
+    
+    envelope.id = budget.records.lastEnvelopeId += 1;
+
+    budget.balance += envelope.balance;
+    budget.envelopes.push(envelope);
+
+    return [
+        envelope,
+        recordTransaction(
+            "create",
+            "unknown",
+            envelope.title,
+            envelope.balance
+        )
+    ];
 };
 
 const addAmountToEnvelope = (amount, id, option) => {
