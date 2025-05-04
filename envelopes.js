@@ -65,10 +65,7 @@ envelopesRouter.delete("/:id", (req, res, next) => {
 envelopesRouter.use((err, req, res, next) => {
     
     if (err["cause"]) {
-        const message = `
-            ${err.message}
-            ${err["cause"].detail.message}
-        `;
+        const message = `${err.message}\n${err["cause"].detail.message}`;
         const statusCode = err["cause"].code;
         res.status(statusCode).send(message);
     } 

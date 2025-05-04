@@ -4,7 +4,7 @@ const checkValueType = (value, type) => {
 
     if (type === "array") {
         if (Array.isArray(value)) return true;
-    } else if (typeof value === "number") {
+    } else if (type === "number" && typeof value === "number") {
         return (Number.isNaN(value)) ? false : true;
     } else if (typeof value === type) {
         return true;
@@ -43,13 +43,13 @@ const throwErrorInDetail = (message, httpStatusCode, prevError = '') => {
 
 // Local checkers
 
-const checkNumber = (value) => {
+const checkNumber = (value, target) => {
 
     if (!checkValueType(value, "number")) {
-        throwErrorInDetail(`Invalid value type: The 'amount' or 'id' is not a number.`, 400);
+        throwErrorInDetail(`Invalid value type: The ${target} is not a number.`, 400);
     }
     if (value <= 0) {
-        throwErrorInDetail(`The value must be greater than 0`, 400); 
+        throwErrorInDetail(`The ${target} must be greater than 0`, 400);
     }
     return true;
 };

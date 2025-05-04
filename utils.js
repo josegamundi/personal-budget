@@ -64,18 +64,18 @@ const getEnvelopes = () => {
 
 const getEnvelopeById = (id, option) => {
 
-    checkNumber(id);
+    checkNumber(id, "envelope ID");
 
     const envelopes = getEnvelopes();
     const envelopeIndex = envelopes.findIndex((enve) => enve.id === id);
     if (envelopeIndex === -1) {
-        throwErrorInDetail(`Envelope not found.`, 404);
+        throwErrorInDetail(`The envelope ID:${id} does not return any matches.`, 404);
     }
     const envelope = envelopes[envelopeIndex];
 
     if (option === "delete") {
         if (envelope.balance > 0) {
-            throw new Error(`The envelope must be empty before being deleted.`);
+            throwErrorInDetail(`The ${envelope.title} envelope must be empty before being deleted.`, 400);
         }
         return [
             envelopes.splice(envelopeIndex, 1),
@@ -93,14 +93,9 @@ const getEnvelopeById = (id, option) => {
 
 const addAmountToEnvelope = (amount, id, option) => {
     
-    checkNumber(amount);
+    checkNumber(amount, "amount to add");
 
-    let envelope;
-    try {
-        envelope = getEnvelopeById(id);
-    } catch(error) {
-        throwErrorInDetail(`Invalid destination.`, 404, error);
-    }
+    const envelope = getEnvelopeById(id);
     envelope.balance += amount;
 
     if (option === "deposit") {
@@ -121,18 +116,13 @@ const addAmountToEnvelope = (amount, id, option) => {
 
 const extractAmountFromEnvelope = (amount, id, option) => {
     
-    checkNumber(amount);
+    checkNumber(amount, "amount to be extracted");
     
-    let envelope;
-    try {
-        envelope = getEnvelopeById(id);
-    } catch(error) {
-        throwErrorInDetail(`Invalid origin.`, 404, error);
-    }
+    const envelope = getEnvelopeById(id);
     if (envelope.balance <= 0) {
-        throw new Error(`The ${envelope.title} balance is empty.`);
+        throwErrorInDetail(`The balance of the ${envelope.title} envelope is empty.`, 400);
     } else if (amount > envelope.balance) {
-        throw new Error(`The amount you want to withdraw is greater than the envelope balance.`);
+        throwErrorInDetail(`The amount you want to withdraw is greater than the balance of the ${envelope.title} envelope.`, 400);
     }
     envelope.balance -= amount;
 
