@@ -12,8 +12,8 @@ The goal was to build an API that allows users to:
 - Create, read, update, and delete budget envelopes (CRUD).
 - Manage individual envelope balances.
 - Transfer money between envelopes without exceeding limits.
-- Validate data to ensure responsible budget management.
-- Follow REST best practices: proper naming conventions, HTTP status codes, and error handling.
+
+Following REST best practices: proper naming conventions, HTTP status codes, data validation, and error handling.
 
 ## 🛠️ Technologies Used
 

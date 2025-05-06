@@ -11,8 +11,8 @@ El objetivo fue crear una API que permita a los usuarios:
 - Crear, consultar, actualizar y eliminar sobres de presupuesto (CRUD).
 - Administrar saldos individuales por sobre.
 - Transferir dinero entre sobres sin exceder los límites establecidos.
-- Validar los datos para garantizar un uso responsable del presupuesto.
-- Seguir buenas prácticas REST: uso adecuado de endpoints, códigos de estado HTTP y manejo de errores.
+
+Siguiendo buenas prácticas REST: uso adecuado de endpoints, códigos de estado HTTP, validación de datos y manejo de errores.
 
 ## 🛠️ Tecnologías utilizadas
 
