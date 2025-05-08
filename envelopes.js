@@ -9,7 +9,8 @@ const {
     getEnvelopeById,
     addAmountToEnvelope,
     extractAmountFromEnvelope,
-    transferBetweenEnvelopes
+    transferBetweenEnvelopes,
+    distributeAmongAllEnvelopes
 } = require('./utils');
 
 // Endpoints
@@ -36,6 +37,11 @@ envelopesRouter.put('/deposit/:id', (req, res, next) => {
         Number(req.params.id),
         "deposit"
     ));
+});
+
+// Distribute amount among all envelopes
+envelopesRouter.put('/deposit-all', (req, res, next) => {
+    res.send(distributeAmongAllEnvelopes(Number(req.query.amount)));
 });
 
 // Extract amount from envelope

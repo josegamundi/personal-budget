@@ -159,6 +159,27 @@ const transferBetweenEnvelopes = (amount, fromId, toId) => {
     ];
 };
 
+const distributeAmongAllEnvelopes = (amount) => {
+
+    checkNumber(amount, "amount to be distributed");
+
+    const envelopes = getEnvelopes();
+    const amountPerEnvelope = amount / envelopes.length;
+    envelopes.forEach(envelope => envelope.balance += amountPerEnvelope);
+
+    budget.balance += amount;
+
+    return [
+        envelopes,
+        recordTransaction(
+            "deposit",
+            "unknown",
+            "all",
+            amount
+        )
+    ]
+}
+
 // Exports
 
 module.exports = {
@@ -167,5 +188,6 @@ module.exports = {
     getEnvelopeById,
     addAmountToEnvelope,
     extractAmountFromEnvelope,
-    transferBetweenEnvelopes
+    transferBetweenEnvelopes,
+    distributeAmongAllEnvelopes
 };
