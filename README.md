@@ -3,7 +3,7 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/josegamundi/personal-budget/blob/main/README.md)
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/josegamundi/personal-budget/blob/main/README.es.md)
 
-Practical exercise from the **"Back-End Engineer Career Path"** course on [Codecademy.com](https://www.codecademy.com/), where a RESTful API is developed to manage a personal budget using virtual envelope categories.
+Practical exercise from the **"Back-End Engineer Career Path"** course on [Codecademy.com](https://www.codecademy.com/), where a RESTful API is developed to manage a personal budget using virtual envelopes.
 
 ## 📌 Project Objective
 
