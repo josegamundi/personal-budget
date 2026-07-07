@@ -1,4 +1,9 @@
+import pg from 'pg'
+const { Pool } = pg
+ 
+const pool = new Pool()
 
+/*
 require('dotenv').config()
 console.log(`Hello ${process.env.HELLO}`)
 
@@ -13,3 +18,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+*/
