@@ -1,8 +1,13 @@
 import 'dotenv/config'
-import { pool } from './config/db.js';
+import express from 'express';
 
-async function connection_test() {
-  const res = await pool.query('SELECT * FROM users');
-  console.log('user:', res.rows[0]);
-}
-connection_test();
+const app = express();
+const port = process.env.PORT;
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
