@@ -1,8 +1,3 @@
-import pg from 'pg'
-const { Pool } = pg
- 
-const pool = new Pool()
-
 /*
 require('dotenv').config()
 console.log(`Hello ${process.env.HELLO}`)
