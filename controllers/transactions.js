@@ -31,3 +31,29 @@ export const createTransaction = async(req, res ,next) => {
     next(error);
   }
 };
+
+export const updateTransaction = async(req, res ,next) => {
+  try {
+    const transactionId = Number(req.params.id);
+    const update = req.body;
+    const query = {
+      text: `
+        UPDATE transactions
+        SET (title, type, amount, note) = ($1, $2, $3, $4)
+        WHERE transaction_id = $5
+        RETURNING *
+      `,
+      values: [ 
+        update.title, 
+        update.type, 
+        update.amount, 
+        update.note,
+        transactionId
+      ],
+    };
+    const response = await pool.query(query);
+    res.json(response.rows);
+  } catch(error) {
+    next(error);
+  }
+};
