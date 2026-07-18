@@ -6,6 +6,8 @@ import { transactionsRouter } from './routes/transactions.js';
 const app = express();
 const port = process.env.PORT;
 
+app.use(express.json()); // for parsing application/json
+
 app.use('/transactions', transactionsRouter);
 
 app.listen(port, () => {
