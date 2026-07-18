@@ -23,7 +23,7 @@ export const createTransaction = async(req, res ,next) => {
         transaction.type, 
         transaction.amount, 
         transaction.note
-      ],
+      ]
     };
     const response = await pool.query(query);
     res.json(response.rows);
@@ -49,7 +49,27 @@ export const updateTransaction = async(req, res ,next) => {
         update.amount, 
         update.note,
         transactionId
-      ],
+      ]
+    };
+    const response = await pool.query(query);
+    res.json(response.rows);
+  } catch(error) {
+    next(error);
+  }
+};
+
+export const deleteTransaction = async(req, res ,next) => {
+  try {
+    const transactionId = Number(req.params.id);
+    const query = {
+      text: `
+        DELETE FROM transactions
+        WHERE transaction_id = $1
+        RETURNING *
+      `,
+      values: [
+        transactionId
+      ]
     };
     const response = await pool.query(query);
     res.json(response.rows);
