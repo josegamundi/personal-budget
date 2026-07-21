@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import { authRouter } from './routes/auth.js';
 import { transactionsRouter } from './routes/transactions.js';
 
 const app = express();
@@ -9,6 +10,7 @@ const port = process.env.PORT;
 app.use(express.json());
 
 // Routers
+app.use('/auth', authRouter);
 app.use('/transactions', transactionsRouter);
 
 // Default error handler
