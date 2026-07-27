@@ -20,8 +20,8 @@ app.use((err, req, res, next) => {
   
   res.status(errorCode);
   res.json({
-    "Error Code" : errorCode,
-    "Error message" : errorMessage
+    "code" : errorCode,
+    "message" : errorMessage
   });
 });
 

@@ -41,13 +41,13 @@ export const loginUser = async (req, res, next) => {
     if (response.rows.length) {
       const isThePassword = await bcrypt.compare(user.password, response.rows[0].password);
       if (!isThePassword) {
-        res.status(401).json({ error: 'Invalid password, access denied' });
+        res.status(401).json({ message: 'Invalid password, access denied' });
       } else {
         const token = jwt.sign({ "user_id": response.rows[0].user_id }, process.env.JWT_SECRET, { "expiresIn": "1h" });
         res.json({ token });
       };
     } else {
-      res.status(401).json({ error: 'Invalid email, access denied' });
+      res.status(401).json({ message: 'Invalid email, access denied' });
     }
   } catch(error) {
     next(error);
