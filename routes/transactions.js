@@ -4,9 +4,12 @@ import {
   updateTransaction,
   deleteTransaction 
 } from '../controllers/transactions.js';
+import { tokenAuth } from '../middlewares/auth.js';
 import express from 'express';
 
 export const transactionsRouter = express.Router();
+
+transactionsRouter.use('/', tokenAuth);
 
 transactionsRouter.get('/', getAllTransactions);
 transactionsRouter.post('/', createTransaction);
