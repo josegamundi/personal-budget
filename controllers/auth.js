@@ -1,5 +1,6 @@
 import { pool } from "../config/db.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res, next) => {
   try {
@@ -24,5 +25,31 @@ export const registerUser = async (req, res, next) => {
 };
 
 export const loginUser = async (req, res, next) => {
-
+  try {
+    const user = req.body;
+    const query = {
+      text: `
+        SELECT * FROM users
+        WHERE email = $1
+      `,
+      values: [ 
+        user.email
+      ]
+    };
+    const response = await pool.query(query);
+    
+    if (response.rows.length) {
+      const isThePassword = await bcrypt.compare(user.password, response.rows[0].password);
+      if (!isThePassword) {
+        res.status(401).json({ error: 'Invalid password, access denied' });
+      } else {
+        const token = jwt.sign({ "user_id": response.rows[0].user_id }, process.env.JWT_SECRET, { "expiresIn": "1h" });
+        res.json({ token });
+      };
+    } else {
+      res.status(401).json({ error: 'Invalid email, access denied' });
+    }
+  } catch(error) {
+    next(error);
+  }
 };
