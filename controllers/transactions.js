@@ -1,6 +1,6 @@
 import { pool } from "../config/db.js";
 
-export const getAllTransactions = async (req, res, next) => {
+export const getTransactions = async (req, res, next) => {
   try {
     const userId = req.user.user_id;
     const query = {

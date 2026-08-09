@@ -1,5 +1,5 @@
 import {
-  getAllTransactions,
+  getTransactions,
   getSummary, 
   createTransaction,
   updateTransaction,
@@ -12,7 +12,7 @@ export const transactionsRouter = express.Router();
 
 transactionsRouter.use('/', tokenAuth);
 
-transactionsRouter.get('/', getAllTransactions);
+transactionsRouter.get('/', getTransactions);
 transactionsRouter.get('/summary', getSummary);
 transactionsRouter.post('/', createTransaction);
 transactionsRouter.put('/:id', updateTransaction);
