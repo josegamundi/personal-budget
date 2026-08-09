@@ -142,5 +142,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Guide files
-file_structure.txt
+# OS
+.DS_Store
