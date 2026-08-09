@@ -19,6 +19,37 @@ export const getAllTransactions = async (req, res, next) => {
   }
 };
 
+export const getSummary = async(req, res, next) => {
+  try {
+    const userId = req.user.user_id;
+    const query = {
+      text: `
+        SELECT type, SUM(amount) AS total FROM transactions
+        WHERE user_id = $1
+        GROUP BY type
+      `,
+      values: [
+        userId
+      ]
+    };
+    const response = await pool.query(query);
+    
+    let incomes = response.rows.find((row) => row.type === "income");
+    incomes = incomes ? Number(incomes.total) : 0;
+    let expenses = response.rows.find((row) => row.type === "expense");
+    expenses = expenses ? Number(expenses.total) : 0;
+    const balance = incomes - expenses;
+
+    res.json({
+      "incomes": incomes,
+      "expenses": expenses,
+      "balance": balance
+    });
+  } catch(error) {
+    next(error);
+  }
+};
+
 export const createTransaction = async(req, res ,next) => {
   try {
     const userId = req.user.user_id;
