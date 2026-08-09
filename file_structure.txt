@@ -1,0 +1,18 @@
+personal-budget/
+├── config/
+│   └── db.js                  # Configuración y conexión a PostgreSQL (pool de node-postgres)
+├── controllers/
+│   ├── auth.js                # Lógica de registro y login (bcrypt + JWT)
+│   └── transactions.js        # Lógica CRUD de transacciones
+├── middlewares/
+│   └── auth.js                # Middleware que verifica el JWT en rutas protegidas
+├── routes/
+│   ├── auth.js                # Rutas: POST /auth/register, POST /auth/login
+│   └── transactions.js        # Rutas: GET/POST/PUT/DELETE /transactions
+├── .env
+├── .gitignore
+├── app.js                     # Punto de entrada: instancia Express, monta rutas, arranca servidor
+├── package.json
+├── package-lock.json
+├── personal_budget.sql        # Blueprint de la base de datos
+└── README.md
