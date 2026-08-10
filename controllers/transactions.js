@@ -3,13 +3,23 @@ import { pool } from "../config/db.js";
 export const getTransactions = async (req, res, next) => {
   try {
     const userId = req.user.user_id;
+    const filter = req.query;
     const query = {
       text: `
         SELECT * FROM transactions
         WHERE user_id = $1
+          AND ($2::timestamp IS NULL OR created_at >= $2::timestamp)
+          AND ($3::timestamp IS NULL OR created_at < ($3::date + INTERVAL '1 day')::timestamp)
+          AND ($4::transaction_type IS NULL OR type = $4)
+          AND ($5::integer IS NULL OR category_id = $5)
+        ORDER BY created_at DESC;
       `,
       values: [
-        userId
+        userId,
+        filter.start_time,
+        filter.end_time,
+        filter.transaction_type,
+        filter.category_id
       ]
     };
     const response = await pool.query(query);
