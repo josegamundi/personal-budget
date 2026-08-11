@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import { authRouter } from './routes/auth.js';
+import { categoriesRouter } from './routes/categories.js';
 import { transactionsRouter } from './routes/transactions.js';
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Routers
 app.use('/auth', authRouter);
+app.use('/categories', categoriesRouter);
 app.use('/transactions', transactionsRouter);
 
 // Default error handler
