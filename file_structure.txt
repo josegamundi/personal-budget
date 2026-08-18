@@ -1,18 +1,24 @@
 personal-budget/
 ├── config/
-│   └── db.js                  # Configuración y conexión a PostgreSQL (pool de node-postgres)
+│   └── db.js                  # PostgreSQL configuration and connection (pool of node-postgres)
 ├── controllers/
-│   ├── auth.js                # Lógica de registro y login (bcrypt + JWT)
-│   └── transactions.js        # Lógica CRUD de transacciones
+│   ├── auth.js                # Registration and login logic (bcrypt + JWT)
+│   ├── categories.js          # CRUD logic of categories
+│   └── transactions.js        # CRUD logic of transacciones
 ├── middlewares/
-│   └── auth.js                # Middleware que verifica el JWT en rutas protegidas
+│   ├── auth.js                # Middleware that verifies JWTs on protected routes
+│   └── validation.js          # Middleware that validates data sent by the client
 ├── routes/
-│   ├── auth.js                # Rutas: POST /auth/register, POST /auth/login
-│   └── transactions.js        # Rutas: GET/POST/PUT/DELETE /transactions
+│   ├── auth.js                # Routes: POST /auth/register, POST /auth/login
+│   ├── categories.js          # Routes: GET/POST/PUT/DELETE /categories
+│   └── transactions.js        # Routes: GET/POST/PUT/DELETE /transactions
+├── schemas/
+│   ├── categories.js          # Request body validation scheme for categories
+│   └── transactions.js        # Request body validation scheme for transactions
 ├── .env
 ├── .gitignore
-├── app.js                     # Punto de entrada: instancia Express, monta rutas, arranca servidor
+├── app.js                     # Entry point: Express instance, mount routes, start server
 ├── package.json
 ├── package-lock.json
-├── personal_budget.sql        # Blueprint de la base de datos
+├── personal_budget.sql        # Database blueprint
 └── README.md
