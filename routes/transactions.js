@@ -1,3 +1,10 @@
+import express from 'express';
+import { tokenAuth } from '../middlewares/auth.js';
+import { transactionBody } from '../schemas/transactions.js';
+import {
+  validateRequiredFields,
+  validateIdParam
+} from '../middlewares/validation.js';
 import {
   getTransactions,
   getSummary, 
@@ -5,15 +12,27 @@ import {
   updateTransaction,
   deleteTransaction
 } from '../controllers/transactions.js';
-import { tokenAuth } from '../middlewares/auth.js';
-import express from 'express';
 
 export const transactionsRouter = express.Router();
 
 transactionsRouter.use('/', tokenAuth);
 
-transactionsRouter.get('/', getTransactions);
-transactionsRouter.get('/summary', getSummary);
-transactionsRouter.post('/', createTransaction);
-transactionsRouter.put('/:id', updateTransaction);
-transactionsRouter.delete('/:id', deleteTransaction);
+transactionsRouter.get('/',
+  getTransactions
+);
+transactionsRouter.get('/summary',
+  getSummary
+);
+transactionsRouter.post('/',
+  validateRequiredFields(transactionBody, 'body'),
+  createTransaction
+);
+transactionsRouter.put('/:id',
+  validateIdParam,
+  validateRequiredFields(transactionBody, 'body'),
+  updateTransaction
+);
+transactionsRouter.delete('/:id',
+  validateIdParam,
+  deleteTransaction
+);

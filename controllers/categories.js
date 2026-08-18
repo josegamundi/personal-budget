@@ -54,11 +54,6 @@ export const updateCategory = async (req, res, next) => {
   try {
     const userId = req.user.user_id;
     const categoryId = Number(req.params.id);
-    if (isNaN(categoryId)) {
-      const error = new Error("Invalid data type for category id");
-      error.status = 400;
-      throw error;
-    }
     const update = req.body;
     const query = {
       text: `

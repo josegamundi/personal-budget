@@ -87,7 +87,7 @@ export const createTransaction = async(req, res ,next) => {
         res.status(400).json({ "message": "A required field is missing" });
         break;
       case "23503":
-        res.status(409).json({ "message": "The chosen category does not exist" });
+        res.status(404).json({ "message": "Assigned category not found" });
         break;
       default:
         next(error);
@@ -129,7 +129,7 @@ export const updateTransaction = async(req, res ,next) => {
         res.status(400).json({ "message": "A required field is missing" });
         break;
       case "23503":
-        res.status(409).json({ "message": "The chosen category does not exist" });
+        res.status(404).json({ "message": "Assigned category not found" });
         break;
       default:
         next(error);
